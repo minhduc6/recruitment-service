@@ -1,4 +1,4 @@
-package com.example.recruitmentservice.model;
+package vn.unigap.api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,5 +13,5 @@ public class ResponseWrapper<T> {
     private int errorCode;
     private int statusCode;
     private String message;
-    private T result;
+    private T object;
 }

@@ -1,4 +1,4 @@
-package com.example.recruitmentservice.exceptions;
+package vn.unigap.api.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import vn.unigap.api.model.ResponseWrapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,16 +20,24 @@ import java.util.stream.Collectors;
 public class ValidationAdvice  {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public final ResponseEntity<ValidationErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+	public final  ResponseWrapper<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
 		final List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-		final List<String> errorList = fieldErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
+		final List<String> errorList = fieldErrors.stream()
+				.map(DefaultMessageSourceResolvable::getDefaultMessage)
+				.collect(Collectors.toList());
 
-		final ValidationErrorResponse validationErrorResponse = new ValidationErrorResponse(HttpStatus.BAD_REQUEST, LocalDateTime.now(), errorList);
+		final String errorsAsString = String.join(", ", errorList);
+
 
 		log.warn("Validation errors : {} , Parameters : {}", errorList, exception.getBindingResult().getTarget());
 
-		return ResponseEntity.status(validationErrorResponse.getStatus()).body(validationErrorResponse);
+        return new ResponseWrapper<>(
+				-1, // Assuming 0 for no specific error code
+				HttpStatus.BAD_REQUEST.value(),
+				"Validation failed: " + errorsAsString,
+				null
+		);
 	}
 
 }

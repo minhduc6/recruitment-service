@@ -1,4 +1,4 @@
-package com.example.recruitmentservice.exceptions;
+package vn.unigap.api.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

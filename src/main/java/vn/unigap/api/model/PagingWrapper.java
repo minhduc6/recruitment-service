@@ -1,4 +1,4 @@
-package com.example.recruitmentservice.model;
+package vn.unigap.api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
