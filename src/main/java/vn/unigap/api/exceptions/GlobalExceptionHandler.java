@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         if (ex instanceof NotFoundException) {
             apiExceptionResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
         } else if (ex instanceof BadRequestException) {
-            apiExceptionResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+            apiExceptionResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
         }
 
         return apiExceptionResponse;

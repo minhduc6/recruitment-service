@@ -1,5 +1,6 @@
 package vn.unigap.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -28,4 +30,15 @@ public class Province implements Serializable {
 
     @OneToMany(mappedBy="province")
     private Set<Employer> employers;
+
+    @OneToMany(mappedBy="province")
+    private Set<Seeker> seekers;
+
+    @ManyToMany(mappedBy = "provinces")
+    @JsonBackReference
+    private Set<Job> jobs = new HashSet<>();
+
+    @ManyToMany(mappedBy = "provinces")
+    @JsonBackReference
+    private Set<Resume> resumes = new HashSet<>();
 }

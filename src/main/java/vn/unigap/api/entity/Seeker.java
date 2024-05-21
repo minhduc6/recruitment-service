@@ -1,9 +1,6 @@
 package vn.unigap.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,22 +13,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "employer")
-public class Employer extends BaseEntity implements Serializable {
-
-    private String email;
-
-    @Column(name = "name")
+@Table(name = "seeker")
+public class Seeker extends BaseEntity implements Serializable {
     private String name;
+    private String birthday;
+    private String address;
 
     @ManyToOne
     @JoinColumn(name = "province_id")
     private Province province;
 
-    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "seeker", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonBackReference
-    private List<Job> jobs;
-
-    private String description;
-
+    private List<Resume> resumes;
 }

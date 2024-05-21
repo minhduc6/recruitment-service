@@ -1,6 +1,7 @@
 package vn.unigap.api.service;
 
 import lombok.AllArgsConstructor;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -48,6 +49,7 @@ public class EmployerServiceImple implements EmployerService {
         // Check if the province exists in the database
         Province province = provinceRepository.findById(createEmployerRequest.getProvinceId())
                 .orElseThrow(() -> new BadRequestException("Invalid province ID " + createEmployerRequest.getProvinceId()));
+        //
 
         employer.setEmail(createEmployerRequest.getEmail());
         employer.setName(createEmployerRequest.getName());
@@ -72,20 +74,13 @@ public class EmployerServiceImple implements EmployerService {
             employer.setProvince(newProvince);
         }
 
-        Field[] fields = UpdateEmployerRequest.class.getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            try {
-                Object updatedValue = field.get(updateEmployerRequest);
-                if (updatedValue != null) {
-                    Field existingField = Employer.class.getDeclaredField(field.getName());
-                    existingField.setAccessible(true);
-                    existingField.set(employer, updatedValue);
-                }
-            } catch (IllegalAccessException | NoSuchFieldException e) {
-                // Handle exception if needed
-            }
+        try {
+            // Copy properties from updateSeekerRequest to seeker
+            BeanUtils.copyProperties(employer, updateEmployerRequest);
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
         }
+
         employerRepository.save(employer);
     }
 

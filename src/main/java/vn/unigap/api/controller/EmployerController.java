@@ -27,9 +27,7 @@ public class EmployerController {
     @GetMapping
     public ResponseWrapper<PagingWrapper<?>> getAllEmployer(@RequestParam(required = false, defaultValue = "1") @Parameter(example = "1") Integer page, @RequestParam(required = false, defaultValue = "10")  @Parameter(example = "10") Integer size) {
         int adjustedPage = page - 1;
-        // Your implementation to retrieve the list of employers goes here
         Page<EmployerDTO> paginatedData = employerService.getAllEmployersSortedByName(adjustedPage, size);
-
 
         List<EmployerDTO> employerDTOS = paginatedData.getContent();
 
@@ -38,7 +36,7 @@ public class EmployerController {
         long totalPages = paginatedData.getTotalPages();
         PagingWrapper<?> pagingWrapper = new PagingWrapper<>(page, size, totalElements, totalPages, employerDTOS);
 
-        return new ResponseWrapper<>(0, HttpStatus.CREATED.value(), "Get employers successfully", pagingWrapper);
+        return new ResponseWrapper<>(0,  HttpStatus.OK.value(), "Get employers successfully", pagingWrapper);
     }
 
     @GetMapping("/{id}")
