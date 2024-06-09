@@ -1,7 +1,11 @@
-package vn.unigap.api.service;
+package vn.unigap.api.service.employer;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,24 +21,38 @@ import vn.unigap.api.exceptions.NotFoundException;
 import vn.unigap.api.mapper.EmployerMapper;
 import vn.unigap.api.repository.EmployerRepository;
 import vn.unigap.api.repository.ProvinceRepository;
+import vn.unigap.api.service.cache.CacheService;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class EmployerServiceImple implements EmployerService {
     private final EmployerRepository employerRepository;
     private final ProvinceRepository provinceRepository;
-
+    private final CacheService cacheService;
 
     public Page<EmployerDTO> getAllEmployersSortedByName(int pageNumber, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("name").ascending());
-        Page<Employer> employerPage = employerRepository.findAll(pageRequest);
+        String cacheName = "employers";
+        String cacheKey = pageNumber + "-" + pageSize;
+
+        // Try to get the value from the cache
+        Page<Employer> employerPage = (Page<Employer>) cacheService.get(cacheName, cacheKey);
+
+        if (employerPage == null) {
+            // If not in cache, query the database
+            PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("name").ascending());
+            employerPage = employerRepository.findAll(pageRequest);
+
+            // Put the result in the cache
+            cacheService.put(cacheName, cacheKey, employerPage);
+        }
 
         return employerPage.map(EmployerMapper::convertToDTO);
     }
+
 
     @Override
     public void createEmployer(CreateEmployerRequest createEmployerRequest) {
@@ -57,6 +75,7 @@ public class EmployerServiceImple implements EmployerService {
         employer.setProvince(province);
 
         employerRepository.save(employer);
+        cacheService.clear("employers");
     }
 
     @Override
@@ -82,18 +101,37 @@ public class EmployerServiceImple implements EmployerService {
         }
 
         employerRepository.save(employer);
+        cacheService.clear("employers");
+        cacheService.evict("employerById",id.toString());
     }
 
     @Override
     public EmployerByIdDto getEmployerById(Integer id) {
-        Employer employer = employerRepository.findById(id).orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
-        return EmployerMapper.convertToEmployerByIdDto(employer);
+        String cacheName = "employerById";
+        String cacheKey = id.toString();
+        Employer employer = (Employer) cacheService.get(cacheName, cacheKey);
+
+        if (employer != null) {
+            return EmployerMapper.convertToEmployerByIdDto(employer);
+        } else {
+            // If not cached, fetch the result from the database
+            Employer employerData = employerRepository.findById(id).orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
+            EmployerByIdDto result = EmployerMapper.convertToEmployerByIdDto(employerData);
+
+            // Cache the result
+            cacheService.put(cacheName, cacheKey, employerData);
+            return result;
+        }
+
     }
+
 
     @Override
     public void deleteEmployer(Integer id) {
         Employer employer = employerRepository.findById(id).orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
         employerRepository.delete(employer);
+        cacheService.clear("employers");
+        cacheService.evict("employerById",id.toString());
     }
 
 

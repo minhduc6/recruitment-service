@@ -1,4 +1,4 @@
-package vn.unigap.api.service;
+package vn.unigap.api.service.province;
 
 import org.springframework.stereotype.Service;
 import vn.unigap.api.entity.Province;

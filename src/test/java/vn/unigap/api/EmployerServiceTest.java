@@ -19,7 +19,7 @@ import vn.unigap.api.exceptions.BadRequestException;
 import vn.unigap.api.exceptions.NotFoundException;
 import vn.unigap.api.repository.EmployerRepository;
 import vn.unigap.api.repository.ProvinceRepository;
-import vn.unigap.api.service.EmployerServiceImple;
+import vn.unigap.api.service.employer.EmployerServiceImple;
 
 import java.util.List;
 import java.util.Optional;

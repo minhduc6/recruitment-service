@@ -1,4 +1,4 @@
-package vn.unigap.api.service;
+package vn.unigap.api.service.resume;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ResumeServiceImple implements  ResumeService {
+public class ResumeServiceImple implements ResumeService {
 
     private final ResumeRepository resumeRepository;
     private final JobFieldRepository jobFieldRepository;

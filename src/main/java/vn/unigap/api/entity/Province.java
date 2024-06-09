@@ -9,9 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -29,9 +31,11 @@ public class Province implements Serializable {
     private String slug;
 
     @OneToMany(mappedBy="province")
+    @JsonBackReference
     private Set<Employer> employers;
 
     @OneToMany(mappedBy="province")
+    @JsonBackReference
     private Set<Seeker> seekers;
 
     @ManyToMany(mappedBy = "provinces")
@@ -41,4 +45,30 @@ public class Province implements Serializable {
     @ManyToMany(mappedBy = "provinces")
     @JsonBackReference
     private Set<Resume> resumes = new HashSet<>();
+
+    // Avoid including collections in hashCode and equals
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Province province = (Province) o;
+        return Objects.equals(id, province.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+
+    @Override
+    public String toString() {
+        return "Province{" +
+                "id=" + getId() +
+                ", name='" + name + '\'' +
+                ", slug='" + slug + '\'' +
+                '}';
+    }
+
+
 }

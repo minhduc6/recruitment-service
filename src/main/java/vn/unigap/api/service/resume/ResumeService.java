@@ -1,12 +1,8 @@
-package vn.unigap.api.service;
+package vn.unigap.api.service.resume;
 
 import org.springframework.data.domain.Page;
-import vn.unigap.api.dto.input.CreateJobRequest;
 import vn.unigap.api.dto.input.CreateResumeRequest;
-import vn.unigap.api.dto.input.UpdateJobRequest;
 import vn.unigap.api.dto.input.UpdateResumeRequest;
-import vn.unigap.api.dto.output.JobByIdDTO;
-import vn.unigap.api.dto.output.JobDTO;
 import vn.unigap.api.dto.output.ResumeByIdDTO;
 import vn.unigap.api.dto.output.ResumeDTO;
 

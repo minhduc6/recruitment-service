@@ -1,4 +1,4 @@
-package vn.unigap.api.service;
+package vn.unigap.api.service.province;
 
 import vn.unigap.api.entity.Province;
 

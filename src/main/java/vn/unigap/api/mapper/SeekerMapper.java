@@ -3,9 +3,8 @@ package vn.unigap.api.mapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import vn.unigap.api.dto.output.JobDTO;
 import vn.unigap.api.dto.output.SeekerDTO;
-import vn.unigap.api.entity.Job;
+import vn.unigap.api.dto.output.SeekerInfomation;
 import vn.unigap.api.entity.Seeker;
 
 public class SeekerMapper {
@@ -25,6 +24,11 @@ public class SeekerMapper {
             dto.setProvinceId(null);
             dto.setProvinceName(null);
         }
+        return dto;
+    }
+
+    public static SeekerInfomation convertToSeekerInfomation(Seeker seeker) {
+        SeekerInfomation dto = objectMapper.convertValue(seeker, SeekerInfomation.class);
         return dto;
     }
 }
