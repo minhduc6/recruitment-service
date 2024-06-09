@@ -27,3 +27,4 @@ public class Seeker extends BaseEntity implements Serializable {
     @JsonBackReference
     private List<Resume> resumes;
 }
+

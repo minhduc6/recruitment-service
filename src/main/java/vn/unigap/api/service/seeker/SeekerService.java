@@ -1,4 +1,4 @@
-package vn.unigap.api.service;
+package vn.unigap.api.service.seeker;
 
 import org.springframework.data.domain.Page;
 import vn.unigap.api.dto.input.CreateSeekerRequest;

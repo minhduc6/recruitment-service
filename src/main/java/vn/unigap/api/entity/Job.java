@@ -3,6 +3,7 @@ package vn.unigap.api.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -95,4 +96,17 @@ public class Job extends BaseEntity implements Serializable {
         }
         this.jobFields.clear();
     }
+
+    @Override
+    public String toString() {
+        return "Job{" +
+                "id=" + getId() +
+                ", title='" + title + '\'' +
+                ", quantity=" + quantity +
+                ", description='" + description + '\'' +
+                ", salary=" + salary +
+                ", expired_at=" + expired_at +
+                '}';
+    }
+
 }

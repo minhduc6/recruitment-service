@@ -13,7 +13,19 @@ services:
     volumes:
       - mysql-db:/var/lib/mysql
     restart: on-failure
+  redis:
+    image: redis:7.2.1-alpine3.18
+    environment:
+      REDIS_PASSWORD: Redis@123
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    restart: on-failure
+    command: /bin/sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
 
 volumes:
   mysql-db:
+    driver: local
+  redis-data:
     driver: local

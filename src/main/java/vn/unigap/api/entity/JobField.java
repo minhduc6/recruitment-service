@@ -3,6 +3,7 @@ package vn.unigap.api.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -27,4 +28,13 @@ public class JobField extends BaseEntity implements Serializable {
     @ManyToMany(mappedBy = "jobFields")
     @JsonBackReference
     private Set<Resume> resumes = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "JobField{" +
+                "id=" + getId() +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
 }

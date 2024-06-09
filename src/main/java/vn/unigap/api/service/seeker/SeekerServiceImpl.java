@@ -1,4 +1,4 @@
-package vn.unigap.api.service;
+package vn.unigap.api.service.seeker;
 
 import lombok.AllArgsConstructor;
 import org.apache.commons.beanutils.BeanUtils;
@@ -17,7 +17,6 @@ import vn.unigap.api.mapper.SeekerMapper;
 import vn.unigap.api.repository.ProvinceRepository;
 import vn.unigap.api.repository.SeekerRepository;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -25,7 +24,7 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
-public class SeekerServiceImpl implements SeekerService{
+public class SeekerServiceImpl implements SeekerService {
     private final SeekerRepository seekerRepository;
     private final ProvinceRepository provinceRepository;
     @Override

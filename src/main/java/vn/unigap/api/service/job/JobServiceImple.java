@@ -1,35 +1,27 @@
-package vn.unigap.api.service;
+package vn.unigap.api.service.job;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.unigap.api.dto.input.BaseJobRequest;
 import vn.unigap.api.dto.input.CreateJobRequest;
 import vn.unigap.api.dto.input.UpdateJobRequest;
-import vn.unigap.api.dto.output.JobByIdDTO;
-import vn.unigap.api.dto.output.JobDTO;
-import vn.unigap.api.entity.Employer;
-import vn.unigap.api.entity.Job;
-import vn.unigap.api.entity.JobField;
-import vn.unigap.api.entity.Province;
+import vn.unigap.api.dto.output.*;
+import vn.unigap.api.entity.*;
 import vn.unigap.api.exceptions.BadRequestException;
 import vn.unigap.api.exceptions.NotFoundException;
 import vn.unigap.api.mapper.JobMapper;
-import vn.unigap.api.repository.EmployerRepository;
-import vn.unigap.api.repository.JobFieldRepository;
-import vn.unigap.api.repository.JobRepository;
-import vn.unigap.api.repository.ProvinceRepository;
+import vn.unigap.api.mapper.SeekerMapper;
+import vn.unigap.api.repository.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +31,8 @@ public class JobServiceImple implements JobService {
     private final EmployerRepository employerRepository;
     private final JobFieldRepository jobFieldRepository;
     private final ProvinceRepository provinceRepository;
+    private final ResumeRepository resumeRepository;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public Page<JobDTO> getAllJobByEmployerId(int pageNumber, int pageSize, Integer employerId) {
@@ -55,7 +49,9 @@ public class JobServiceImple implements JobService {
 
     @Override
     public JobByIdDTO getJobById(Integer id) {
-        Job job = jobRepository.findById(id).orElseThrow(() -> new NotFoundException("Job not found with ID: " + id));
+        System.out.println("ID" + id);
+        Job job = jobRepository.findByIdCheck(id).orElseThrow(() -> new NotFoundException("Job not found with ID: " + id));
+        System.out.println("Job employer" + job.getEmployer());
         return JobMapper.convertToJobByIdDTO(job);
     }
 
@@ -135,5 +131,51 @@ public class JobServiceImple implements JobService {
         job.setProvinces(null);
 
         jobRepository.delete(job);
+    }
+
+    @Override
+    public JobInformation getJobInformationAndSeekerRightFit(Integer jobId) {
+        Job job = jobRepository.findByIdCheck(jobId)
+                .orElseThrow(() -> new NotFoundException("Job not found with ID: " + jobId));
+
+        String sql = "WITH job_fields_and_province_of_job AS (" +
+                "    SELECT j.id, j.salary, jj.job_field_id, jp.province_id" +
+                "    FROM jobs j" +
+                "             INNER JOIN job_db.job_jobfield jj ON j.id = jj.job_id" +
+                "             INNER JOIN job_db.job_province jp ON j.id = jp.job_id" +
+                "    WHERE j.id = :jobId" +
+                ")" +
+                "SELECT r.id, jj.job_field_id, jp.province_id" +
+                " FROM resume r" +
+                "         INNER JOIN resume_jobfield jj ON r.id = jj.resume_id" +
+                "         INNER JOIN resume_province jp ON r.id = jp.resume_id" +
+                " WHERE jj.job_field_id IN (SELECT job_field_id FROM job_fields_and_province_of_job)" +
+                " AND jp.province_id IN (SELECT province_id FROM job_fields_and_province_of_job)" +
+                " AND r.salary < (SELECT salary FROM job_fields_and_province_of_job WHERE id = :jobId GROUP BY id, salary)";
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("jobId", jobId);
+
+        List<Map<String, Object>> result = namedParameterJdbcTemplate.queryForList(sql, paramMap);
+
+        List<Integer> resumeListId = new ArrayList<>();
+        List<SeekerInfomation> seekerInfomationList = new ArrayList<>();
+
+        // Process the results
+        for (Map<String, Object> row : result) {
+            resumeListId.add((Integer) row.get("id"));
+        }
+
+        for (Integer resumeId : resumeListId) {
+            resumeRepository.findById(resumeId).ifPresent(resume -> {
+                SeekerInfomation seekerInfomation = SeekerMapper.convertToSeekerInfomation(resume.getSeeker());
+                if (seekerInfomation != null) {
+                    seekerInfomationList.add(seekerInfomation);
+                }
+            });
+        }
+        JobInformation jobInformation = JobMapper.covertToJobInformation(job);
+        jobInformation.setSeekerInfomationList(seekerInfomationList);
+        return  jobInformation;
     }
 }
