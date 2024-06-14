@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.unigap.api.dto.input.CreateEmployerRequest;
 import vn.unigap.api.dto.input.UpdateEmployerRequest;
@@ -28,6 +29,7 @@ public class EmployerController {
     private static final Logger logger = LoggerFactory.getLogger(EmployerController.class);
     private final EmployerService employerService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseWrapper<PagingWrapper<?>> getAllEmployer(@RequestParam(required = false, defaultValue = "1") @Parameter(example = "1") Integer page, @RequestParam(required = false, defaultValue = "10") @Parameter(example = "10") Integer size) {
         int adjustedPage = page - 1;
@@ -42,6 +44,7 @@ public class EmployerController {
         return new ResponseWrapper<>(0, HttpStatus.OK.value(), "Get employers successfully", pagingWrapper);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseWrapper<EmployerByIdDto> getEmployerById(@PathVariable Integer id) {
         logger.info("Received request GET /employers/{id} to get employer by ID: {}", id);
