@@ -1,12 +1,19 @@
 package vn.unigap.api.exceptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vn.unigap.api.model.ResponseWrapper;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+
+import java.security.SignatureException;
 
 
 @RestControllerAdvice
@@ -27,6 +34,31 @@ public class GlobalExceptionHandler {
         }
 
         return apiExceptionResponse;
+    }
+
+    @ExceptionHandler({ExpiredJwtException.class, JwtException.class})
+    public ResponseEntity<ResponseWrapper<?>> handleErrorToken(JwtException ex) {
+        logger.warn("Handling JwtException: {}", ex.getMessage());
+
+        // Create a response wrapper with appropriate error details
+        ResponseWrapper<?> apiExceptionResponse = new ResponseWrapper<>();
+        apiExceptionResponse.setErrorCode(-1);
+        apiExceptionResponse.setMessage("Token Error: " + ex.getMessage());
+        apiExceptionResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+
+        // Return ResponseEntity with 401 status code
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiExceptionResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public final ResponseEntity<ResponseWrapper<?>> handleAccessDeniedException(AccessDeniedException ex) {
+        logger.warn("Access denied: {}", ex.getMessage());
+        ResponseWrapper<?> apiExceptionResponse = new ResponseWrapper<>();
+        apiExceptionResponse.setErrorCode(-1);
+        apiExceptionResponse.setMessage("Access denied: " + ex.getMessage());
+        apiExceptionResponse.setStatusCode(HttpStatus.FORBIDDEN.value());
+
+        return new ResponseEntity<>(apiExceptionResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
