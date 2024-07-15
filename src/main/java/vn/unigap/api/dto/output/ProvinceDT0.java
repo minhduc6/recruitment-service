@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class ProvinceDT0 {
-    private Integer id;
+  private Integer id;
 
-    private String name;
+  private String name;
 }

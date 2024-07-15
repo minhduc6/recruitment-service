@@ -7,9 +7,13 @@ import vn.unigap.api.dto.output.ResumeByIdDTO;
 import vn.unigap.api.dto.output.ResumeDTO;
 
 public interface ResumeService {
-    Page<ResumeDTO> getAllResumeBySeekerId(int pageNumber, int pageSize, Integer seekerId);
-    ResumeByIdDTO getResumeById(Integer id);
-    void createResume(CreateResumeRequest createResumeRequest);
-    void updateResume(Integer resumeId , UpdateResumeRequest updateResumeRequest);
-    void deleteResume(Integer id);
+  Page<ResumeDTO> getAllResumeBySeekerId(int pageNumber, int pageSize, Integer seekerId);
+
+  ResumeByIdDTO getResumeById(Integer id);
+
+  void createResume(CreateResumeRequest createResumeRequest);
+
+  void updateResume(Integer resumeId, UpdateResumeRequest updateResumeRequest);
+
+  void deleteResume(Integer id);
 }

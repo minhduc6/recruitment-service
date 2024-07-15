@@ -1,4 +1,3 @@
 package vn.unigap.api.dto.input;
 
-public class UpdateSeekerRequest extends BaseSeekerRequest{
-}
+public class UpdateSeekerRequest extends BaseSeekerRequest {}

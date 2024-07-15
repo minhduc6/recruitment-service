@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class CreateResumeRequest extends BaseResumeRequest{
-    @NotNull(message = "Seeker Id must not be null")
-    private Integer seekerId;
+public class CreateResumeRequest extends BaseResumeRequest {
+  @NotNull(message = "Seeker Id must not be null")
+  private Integer seekerId;
 }

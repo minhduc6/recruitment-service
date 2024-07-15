@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseWrapper<T> {
-    private int errorCode;
-    private int statusCode;
-    private String message;
-    private T object;
+  private int errorCode;
+  private int statusCode;
+  private String message;
+  private T object;
 }
