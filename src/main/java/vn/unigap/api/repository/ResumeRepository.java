@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import vn.unigap.api.entity.Resume;
 
 @Repository
-public interface ResumeRepository  extends JpaRepository<Resume, Integer> {
-    Page<Resume> findBySeekerId(int seekerId, Pageable pageable);
+public interface ResumeRepository extends JpaRepository<Resume, Integer> {
+  Page<Resume> findBySeekerId(int seekerId, Pageable pageable);
 }

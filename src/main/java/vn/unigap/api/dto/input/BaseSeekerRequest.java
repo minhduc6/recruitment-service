@@ -10,12 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseSeekerRequest {
-    @NotNull(message = "Name must not be null")
-    private String name;
-    @NotNull(message = "Birthday must not be null")
-    @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "Birthday must be in the format yyyy-MM-dd")
-    private String birthday;
-    private String address;
-    @NotNull(message = "Province ID must not be null")
-    private Integer provinceId;
+  @NotNull(message = "Name must not be null")
+  private String name;
+
+  @NotNull(message = "Birthday must not be null")
+  @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "Birthday must be in the format yyyy-MM-dd")
+  private String birthday;
+
+  private String address;
+
+  @NotNull(message = "Province ID must not be null")
+  private Integer provinceId;
 }

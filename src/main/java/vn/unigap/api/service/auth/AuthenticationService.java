@@ -5,7 +5,7 @@ import vn.unigap.api.dto.input.SigninRequest;
 import vn.unigap.api.dto.output.JwtAuthenticationResponse;
 
 public interface AuthenticationService {
-    JwtAuthenticationResponse signUp(SignUpRequest request);
+  JwtAuthenticationResponse signUp(SignUpRequest request);
 
-    JwtAuthenticationResponse signIn(SigninRequest request);
+  JwtAuthenticationResponse signIn(SigninRequest request);
 }

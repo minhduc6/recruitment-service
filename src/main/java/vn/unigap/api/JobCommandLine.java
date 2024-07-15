@@ -1,26 +1,21 @@
 package vn.unigap.api;
 
-import org.hibernate.Hibernate;
-import lombok.AllArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-//import vn.unigap.api.entity.Job;
-//import vn.unigap.api.entity.JobField;
-//import vn.unigap.api.entity.Province;
-//import vn.unigap.api.entity.Resume;
-//import vn.unigap.api.repository.JobFieldRepository;
-//import vn.unigap.api.repository.JobRepository;
-//import vn.unigap.api.repository.ProvinceRepository;
-//import vn.unigap.api.repository.ResumeRepository;
+// import vn.unigap.api.entity.Job;
+// import vn.unigap.api.entity.JobField;
+// import vn.unigap.api.entity.Province;
+// import vn.unigap.api.entity.Resume;
+// import vn.unigap.api.repository.JobFieldRepository;
+// import vn.unigap.api.repository.JobRepository;
+// import vn.unigap.api.repository.ProvinceRepository;
+// import vn.unigap.api.repository.ResumeRepository;
 //
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Optional;
+// import java.util.ArrayList;
+// import java.util.List;
+// import java.util.Optional;
 //
-//@Component
-//@AllArgsConstructor
-//public class JobCommandLine implements CommandLineRunner {
+// @Component
+// @AllArgsConstructor
+// public class JobCommandLine implements CommandLineRunner {
 //
 //    private final JobRepository jobRepository;
 //    private final JobFieldRepository jobFieldRepository;
@@ -58,7 +53,8 @@ import org.springframework.transaction.annotation.Transactional;
 //                if (!dataFields.isEmpty()) {
 //                    System.out.println("Data Fields: " + dataFields);
 //                    for (Integer dataField : dataFields) {
-//                        Optional<JobField> jobFieldOptional = jobFieldRepository.findById(dataField);
+//                        Optional<JobField> jobFieldOptional =
+// jobFieldRepository.findById(dataField);
 //                        jobFieldOptional.ifPresent(jobEntity::addJobField);
 //                    }
 //                }
@@ -66,7 +62,8 @@ import org.springframework.transaction.annotation.Transactional;
 //                if (!dataProvinces.isEmpty()) {
 //                    System.out.println("Data Provinces: " + dataProvinces);
 //                    for (Integer dataProvince : dataProvinces) {
-//                        Optional<Province> provinceOptional = provinceRepository.findById(dataProvince);
+//                        Optional<Province> provinceOptional =
+// provinceRepository.findById(dataProvince);
 //                        provinceOptional.ifPresent(jobEntity::addProvince);
 //                    }
 //                }
@@ -84,7 +81,8 @@ import org.springframework.transaction.annotation.Transactional;
 //                if (!dataFields.isEmpty()) {
 //                    System.out.println("Data Fields: " + dataFields);
 //                    for (Integer dataField : dataFields) {
-//                        Optional<JobField> jobFieldOptional = jobFieldRepository.findById(dataField);
+//                        Optional<JobField> jobFieldOptional =
+// jobFieldRepository.findById(dataField);
 //                        jobFieldOptional.ifPresent(resumeEntity::addJobField);
 //                    }
 //                }
@@ -92,7 +90,8 @@ import org.springframework.transaction.annotation.Transactional;
 //                if (!dataProvinces.isEmpty()) {
 //                    System.out.println("Data Provinces: " + dataProvinces);
 //                    for (Integer dataProvince : dataProvinces) {
-//                        Optional<Province> provinceOptional = provinceRepository.findById(dataProvince);
+//                        Optional<Province> provinceOptional =
+// provinceRepository.findById(dataProvince);
 //                        provinceOptional.ifPresent(resumeEntity::addProvince);
 //                    }
 //                }
@@ -100,4 +99,4 @@ import org.springframework.transaction.annotation.Transactional;
 //            resumeRepository.save(resumeEntity);
 //        }
 //    }
-//}
+// }

@@ -1,18 +1,12 @@
 package vn.unigap.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
-
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.redis.core.RedisHash;
-
+import jakarta.persistence.Entity;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
-
+import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -23,30 +17,36 @@ import java.util.Objects;
 @Table(name = "employer")
 public class Employer extends BaseEntity implements Serializable {
 
-    private String email;
+  private String email;
 
-    @Column(name = "name")
-    private String name;
+  @Column(name = "name")
+  private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "province_id")
-    @JsonManagedReference
-    private Province province;
+  @ManyToOne
+  @JoinColumn(name = "province_id")
+  @JsonManagedReference
+  private Province province;
 
-    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = false)
-    @JsonBackReference
-    private List<Job> jobs;
+  @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = false)
+  @JsonBackReference
+  private List<Job> jobs;
 
-    private String description;
+  private String description;
 
-    @Override
-    public String toString() {
-        return "Employer{" +
-                "id=" + getId() +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
-
+  @Override
+  public String toString() {
+    return "Employer{"
+        + "id="
+        + getId()
+        + ", name='"
+        + name
+        + '\''
+        + ", email='"
+        + email
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + '}';
+  }
 }

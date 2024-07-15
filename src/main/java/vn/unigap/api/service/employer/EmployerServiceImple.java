@@ -1,11 +1,9 @@
 package vn.unigap.api.service.employer;
 
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,116 +21,128 @@ import vn.unigap.api.repository.EmployerRepository;
 import vn.unigap.api.repository.ProvinceRepository;
 import vn.unigap.api.service.cache.CacheService;
 
-import java.util.Objects;
-
-
 @Slf4j
 @Service
 @AllArgsConstructor
 public class EmployerServiceImple implements EmployerService {
-    private final EmployerRepository employerRepository;
-    private final ProvinceRepository provinceRepository;
-    private final CacheService cacheService;
+  private final EmployerRepository employerRepository;
+  private final ProvinceRepository provinceRepository;
+  private final CacheService cacheService;
 
-    public Page<EmployerDTO> getAllEmployersSortedByName(int pageNumber, int pageSize) {
-        String cacheName = "employers";
-        String cacheKey = pageNumber + "-" + pageSize;
+  public Page<EmployerDTO> getAllEmployersSortedByName(int pageNumber, int pageSize) {
+    String cacheName = "employers";
+    String cacheKey = pageNumber + "-" + pageSize;
 
-        // Try to get the value from the cache
-        Page<Employer> employerPage = (Page<Employer>) cacheService.get(cacheName, cacheKey);
+    // Try to get the value from the cache
+    Page<Employer> employerPage = (Page<Employer>) cacheService.get(cacheName, cacheKey);
 
-        if (employerPage == null) {
-            // If not in cache, query the database
-            PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("name").ascending());
-            employerPage = employerRepository.findAll(pageRequest);
+    if (employerPage == null) {
+      // If not in cache, query the database
+      PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("name").ascending());
+      employerPage = employerRepository.findAll(pageRequest);
 
-            // Put the result in the cache
-            cacheService.put(cacheName, cacheKey, employerPage);
-        }
-
-        return employerPage.map(EmployerMapper::convertToDTO);
+      // Put the result in the cache
+      cacheService.put(cacheName, cacheKey, employerPage);
     }
 
+    return employerPage.map(EmployerMapper::convertToDTO);
+  }
 
-    @Override
-    public void createEmployer(CreateEmployerRequest createEmployerRequest) {
-        Employer employer = new Employer();
+  @Override
+  public void createEmployer(CreateEmployerRequest createEmployerRequest) {
+    Employer employer = new Employer();
 
-        // Check if the email already exists in the database
-        boolean emailExists = employerRepository.existsEmployerByEmail(createEmployerRequest.getEmail());
-        if (emailExists) {
-            throw new BadRequestException("Email already exists");
-        }
-
-        // Check if the province exists in the database
-        Province province = provinceRepository.findById(createEmployerRequest.getProvinceId())
-                .orElseThrow(() -> new BadRequestException("Invalid province ID " + createEmployerRequest.getProvinceId()));
-        //
-
-        employer.setEmail(createEmployerRequest.getEmail());
-        employer.setName(createEmployerRequest.getName());
-        employer.setDescription(createEmployerRequest.getDescription());
-        employer.setProvince(province);
-
-        employerRepository.save(employer);
-        cacheService.clear("employers");
+    // Check if the email already exists in the database
+    boolean emailExists =
+        employerRepository.existsEmployerByEmail(createEmployerRequest.getEmail());
+    if (emailExists) {
+      throw new BadRequestException("Email already exists");
     }
 
-    @Override
-    public void updateEmployer(Integer id, UpdateEmployerRequest updateEmployerRequest) {
-        Employer employer = employerRepository.findById(id).orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
-        // Check if the province exists in the database
+    // Check if the province exists in the database
+    Province province =
+        provinceRepository
+            .findById(createEmployerRequest.getProvinceId())
+            .orElseThrow(
+                () ->
+                    new BadRequestException(
+                        "Invalid province ID " + createEmployerRequest.getProvinceId()));
+    //
 
-        // Check if the province ID has changed
-        if (!Objects.equals(employer.getProvince().getId(), updateEmployerRequest.getProvinceId())) {
-            // Check if the new province exists in the database
-            Province newProvince = provinceRepository.findById(updateEmployerRequest.getProvinceId())
-                    .orElseThrow(() -> new BadRequestException("Invalid province ID " + updateEmployerRequest.getProvinceId()));
+    employer.setEmail(createEmployerRequest.getEmail());
+    employer.setName(createEmployerRequest.getName());
+    employer.setDescription(createEmployerRequest.getDescription());
+    employer.setProvince(province);
 
-            // Update the employer's province only if it has changed
-            employer.setProvince(newProvince);
-        }
+    employerRepository.save(employer);
+    cacheService.clear("employers");
+  }
 
-        try {
-            // Copy properties from updateSeekerRequest to seeker
-            BeanUtils.copyProperties(employer, updateEmployerRequest);
-        } catch (Exception e) {
-            throw new BadRequestException(e.getMessage());
-        }
+  @Override
+  public void updateEmployer(Integer id, UpdateEmployerRequest updateEmployerRequest) {
+    Employer employer =
+        employerRepository
+            .findById(id)
+            .orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
+    // Check if the province exists in the database
 
-        employerRepository.save(employer);
-        cacheService.clear("employers");
-        cacheService.evict("employerById",id.toString());
+    // Check if the province ID has changed
+    if (!Objects.equals(employer.getProvince().getId(), updateEmployerRequest.getProvinceId())) {
+      // Check if the new province exists in the database
+      Province newProvince =
+          provinceRepository
+              .findById(updateEmployerRequest.getProvinceId())
+              .orElseThrow(
+                  () ->
+                      new BadRequestException(
+                          "Invalid province ID " + updateEmployerRequest.getProvinceId()));
+
+      // Update the employer's province only if it has changed
+      employer.setProvince(newProvince);
     }
 
-    @Override
-    public EmployerByIdDto getEmployerById(Integer id) {
-        String cacheName = "employerById";
-        String cacheKey = id.toString();
-        Employer employer = (Employer) cacheService.get(cacheName, cacheKey);
-
-        if (employer != null) {
-            return EmployerMapper.convertToEmployerByIdDto(employer);
-        } else {
-            // If not cached, fetch the result from the database
-            Employer employerData = employerRepository.findById(id).orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
-            EmployerByIdDto result = EmployerMapper.convertToEmployerByIdDto(employerData);
-
-            // Cache the result
-            cacheService.put(cacheName, cacheKey, employerData);
-            return result;
-        }
-
+    try {
+      // Copy properties from updateSeekerRequest to seeker
+      BeanUtils.copyProperties(employer, updateEmployerRequest);
+    } catch (Exception e) {
+      throw new BadRequestException(e.getMessage());
     }
 
+    employerRepository.save(employer);
+    cacheService.clear("employers");
+    cacheService.evict("employerById", id.toString());
+  }
 
-    @Override
-    public void deleteEmployer(Integer id) {
-        Employer employer = employerRepository.findById(id).orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
-        employerRepository.delete(employer);
-        cacheService.clear("employers");
-        cacheService.evict("employerById",id.toString());
+  @Override
+  public EmployerByIdDto getEmployerById(Integer id) {
+    String cacheName = "employerById";
+    String cacheKey = id.toString();
+    Employer employer = (Employer) cacheService.get(cacheName, cacheKey);
+
+    if (employer != null) {
+      return EmployerMapper.convertToEmployerByIdDto(employer);
+    } else {
+      // If not cached, fetch the result from the database
+      Employer employerData =
+          employerRepository
+              .findById(id)
+              .orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
+      EmployerByIdDto result = EmployerMapper.convertToEmployerByIdDto(employerData);
+
+      // Cache the result
+      cacheService.put(cacheName, cacheKey, employerData);
+      return result;
     }
+  }
 
-
+  @Override
+  public void deleteEmployer(Integer id) {
+    Employer employer =
+        employerRepository
+            .findById(id)
+            .orElseThrow(() -> new NotFoundException("Employer not found with ID: " + id));
+    employerRepository.delete(employer);
+    cacheService.clear("employers");
+    cacheService.evict("employerById", id.toString());
+  }
 }

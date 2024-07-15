@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 import vn.unigap.api.entity.JobField;
 
 @Repository
-public interface JobFieldRepository extends JpaRepository<JobField, Integer> {
-}
+public interface JobFieldRepository extends JpaRepository<JobField, Integer> {}

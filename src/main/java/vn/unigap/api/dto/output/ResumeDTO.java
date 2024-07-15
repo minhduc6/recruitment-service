@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class ResumeDTO {
-    private Integer id;
-    private Integer seekerId;
-    private String seekerName;
-    private String careerObj;
-    private String title;
-    private Integer salary;
+  private Integer id;
+  private Integer seekerId;
+  private String seekerName;
+  private String careerObj;
+  private String title;
+  private Integer salary;
 }

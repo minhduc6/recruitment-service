@@ -6,7 +6,5 @@ import vn.unigap.api.entity.Employer;
 
 @Repository
 public interface EmployerRepository extends JpaRepository<Employer, Integer> {
-    Boolean existsEmployerByEmail(String email);
+  Boolean existsEmployerByEmail(String email);
 }
-
-

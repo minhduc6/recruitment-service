@@ -1,9 +1,8 @@
 package vn.unigap.api.service.province;
 
+import java.util.List;
 import vn.unigap.api.entity.Province;
 
-import java.util.List;
-
 public interface ProvinceService {
-    List<Province> getAllProvince();
+  List<Province> getAllProvince();
 }

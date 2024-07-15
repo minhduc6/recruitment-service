@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class SeekerInfomation {
-    private Integer id;
-    private String name;
+  private Integer id;
+  private String name;
 }

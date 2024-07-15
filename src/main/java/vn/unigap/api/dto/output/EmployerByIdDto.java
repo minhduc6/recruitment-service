@@ -10,13 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class EmployerByIdDto {
-    private Integer id;
-    private String email;
-    private String name;
-    private String description;
-    private Integer provinceId;
-    private String provinceName;
+  private Integer id;
+  private String email;
+  private String name;
+  private String description;
+  private Integer provinceId;
+  private String provinceName;
 }
-
-
-

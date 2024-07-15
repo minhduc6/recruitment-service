@@ -8,5 +8,5 @@ import vn.unigap.api.entity.Seeker;
 
 @Repository
 public interface SeekerRepository extends JpaRepository<Seeker, Integer> {
-    Page<Seeker> findAllByProvinceId(int provinceId, Pageable pageable);
+  Page<Seeker> findAllByProvinceId(int provinceId, Pageable pageable);
 }
