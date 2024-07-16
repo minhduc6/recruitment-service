@@ -30,7 +30,6 @@ services:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-
   grafana:
       image: grafana/grafana:9.5.2
       container_name: grafana
@@ -39,10 +38,22 @@ services:
       restart: unless-stopped
       volumes:
         - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+  mongodb:
+    image: mongodb/mongodb-community-server:7.0.1-ubuntu2204
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: Mongo@123
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb:/data/db
+    restart: on-failure
 volumes:
   grafana:
     driver: local
   mysql-db:
     driver: local
   redis-data:
+    driver: local
+  mongodb:
     driver: local
